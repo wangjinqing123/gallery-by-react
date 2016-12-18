@@ -1,0 +1,7 @@
+开发：
+npm run serve
+
+上线：
+npm run clean
+webpack
+npm run dist
