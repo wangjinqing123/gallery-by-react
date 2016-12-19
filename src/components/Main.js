@@ -18,6 +18,11 @@ imageDatas = (function genImageURL(imageDataArr){
   return imageDataArr;
 })(imageDatas);
 
+//－30到30 度数
+function get30DegRandom(){
+  return ((Math.random() > 0.5 ? "" : "-" )+Math.ceil( Math.random() * 30 ));
+}
+// 边界内随机值
 function getRangeRandom(low,high){
   return Math.ceil(Math.random()*(high-low) + low);
 }
@@ -65,14 +70,19 @@ class AppComponent extends React.Component {
         imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex,1);
     //首先居中 centerIndex 的图片
     imgsArrangeCenterArr[0].pos = centerPos;
+    //居中的图片不需要旋转
+    imgsArrangeCenterArr[0].rotate = 0;
     //取出要布局上侧的图片的状态信息
     topImgSpliceIndex = Math.ceil(Math.random()*(imgsArrangeArr.length - topImgNum));
     imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex,topImgNum);
     //布局位于上侧的图片
     imgsArrangeTopArr.forEach(function(value,index){
-      imgsArrangeTopArr[index].pos = {
-        top:getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1]),
-        left:getRangeRandom(vPosRangeX[0],vPosRangeX[1])
+      imgsArrangeTopArr[index] = {
+        pos:{
+          top:getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1]),
+          left:getRangeRandom(vPosRangeX[0],vPosRangeX[1])
+        },
+        rotate:get30DegRandom()
       }
     });
     //布局左右两侧的图片
@@ -84,10 +94,13 @@ class AppComponent extends React.Component {
       }else{//后半部分布局在左边
         hPosRangeLORX = hPosRangeRightSecX;
       }
-      imgsArrangeArr[i].pos = {
-        left:getRangeRandom(hPosRangeLORX[0],hPosRangeLORX[1]),
-        top:getRangeRandom(hPosRangeY[0],hPosRangeY[1])
-      }
+      imgsArrangeArr[i] = {
+        pos:{
+          left:getRangeRandom(hPosRangeLORX[0],hPosRangeLORX[1]),
+          top:getRangeRandom(hPosRangeY[0],hPosRangeY[1])
+        },
+        rotate:get30DegRandom()
+      };
     }
     //
     if(imgsArrangeTopArr && imgsArrangeTopArr[0]){
@@ -149,7 +162,8 @@ class AppComponent extends React.Component {
           pos:{
             left:'0',
             top:'0'
-          }
+          },
+          rotate:0
         };
       }
       imgFigures.push(<ImgFigure key={index} ref={'imgFigure'+index} data={value} arrange={this.state.imgsArrangeArr[index]}/>);
