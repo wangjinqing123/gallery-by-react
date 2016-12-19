@@ -20,11 +20,11 @@ imageDatas = (function genImageURL(imageDataArr){
 
 //－30到30 度数
 function get30DegRandom(){
-  return ((Math.random() > 0.5 ? "" : "-" )+Math.ceil( Math.random() * 30 ));
+  return ((Math.random() > 0.5 ? '' : '-' )+Math.floor( Math.random() * 30 ));
 }
 // 边界内随机值
 function getRangeRandom(low,high){
-  return Math.ceil(Math.random()*(high-low) + low);
+  return Math.floor(Math.random()*(high-low) + low);
 }
 let Constant = {
   //中间区域
@@ -63,17 +63,19 @@ class AppComponent extends React.Component {
         vPosRangeX = vPosRange.x,
 
         imgsArrangeTopArr = [],
-        topImgNum = Math.ceil(Math.random()*2), //取一个或者不取
+        topImgNum = Math.floor(Math.random()*2), //取一个或者不取
 
         topImgSpliceIndex = 0,
 
         imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex,1);
     //首先居中 centerIndex 的图片
-    imgsArrangeCenterArr[0].pos = centerPos;
-    //居中的图片不需要旋转
-    imgsArrangeCenterArr[0].rotate = 0;
+    imgsArrangeCenterArr[0] ={
+      pos:centerPos,
+      rotate:0,
+      isCenter:true
+    }
     //取出要布局上侧的图片的状态信息
-    topImgSpliceIndex = Math.ceil(Math.random()*(imgsArrangeArr.length - topImgNum));
+    topImgSpliceIndex = Math.floor(Math.random()*(imgsArrangeArr.length - topImgNum));
     imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex,topImgNum);
     //布局位于上侧的图片
     imgsArrangeTopArr.forEach(function(value,index){
@@ -82,7 +84,8 @@ class AppComponent extends React.Component {
           top:getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1]),
           left:getRangeRandom(vPosRangeX[0],vPosRangeX[1])
         },
-        rotate:get30DegRandom()
+        rotate:get30DegRandom(),
+        isCenter:false
       }
     });
     //布局左右两侧的图片
@@ -99,7 +102,8 @@ class AppComponent extends React.Component {
           left:getRangeRandom(hPosRangeLORX[0],hPosRangeLORX[1]),
           top:getRangeRandom(hPosRangeY[0],hPosRangeY[1])
         },
-        rotate:get30DegRandom()
+        rotate:get30DegRandom(),
+        isCenter:false
       };
     }
     //
@@ -124,14 +128,14 @@ class AppComponent extends React.Component {
     var stageDOM = ReactDOM.findDOMNode(this.refs.stage),
         stageW = stageDOM.scrollWidth,
         stageH = stageDOM.scrollHeight,
-        halfStageW = Math.ceil(stageW / 2),
-        halfStageH = Math.ceil(stageH/2);
+        halfStageW = Math.floor(stageW / 2),
+        halfStageH = Math.floor(stageH/2);
     //拿到－个imageFigure的大小
     var imgFigureDOM = ReactDOM.findDOMNode(this.refs.imgFigure0),
         imgW = imgFigureDOM.scrollWidth,
         imgH = imgFigureDOM.scrollHeight,
-        halfImgW = Math.ceil(imgW/2),
-        halfImgH = Math.ceil(imgH/2);
+        halfImgW = Math.floor(imgW/2),
+        halfImgH = Math.floor(imgH/2);
     //计算中心图片的位置点
     Constant.centerPos = {
       left:halfStageW - halfImgW,
@@ -152,6 +156,22 @@ class AppComponent extends React.Component {
     Constant.vPosRange.x[1] = halfStageW;
 
     this.rearrange(0);
+
+  }
+  //闭包
+  inverse(index){
+    return function(){
+      var imgsArrangeArr = this.state.imgsArrangeArr;
+      imgsArrangeArr[index].isInverse = !imgsArrangeArr[index].isInverse;
+      this.setState({
+        imgsArrangeArr:imgsArrangeArr
+      });
+    }.bind(this);
+  }
+  center(index){
+    return function(){
+      this.rearrange(index);
+    }.bind(this);
   }
   render() {
     let controllerUnits =[],
@@ -163,10 +183,20 @@ class AppComponent extends React.Component {
             left:'0',
             top:'0'
           },
-          rotate:0
+          rotate:0,
+          isInverse:false,
+          isCenter:false
         };
       }
-      imgFigures.push(<ImgFigure key={index} ref={'imgFigure'+index} data={value} arrange={this.state.imgsArrangeArr[index]}/>);
+      imgFigures.push(
+        <ImgFigure
+          key={index}
+          ref={'imgFigure'+index}
+          data={value}
+          arrange={this.state.imgsArrangeArr[index]}
+          inverse={this.inverse(index)}
+          center={this.center(index)}
+        />);
     }.bind(this))
     return (
       <section className="stage" ref="stage">

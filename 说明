@@ -5,3 +5,6 @@ npm run serve
 npm run clean
 webpack
 npm run dist
+
+
+使用absolute定位.
