@@ -1,4 +1,7 @@
-
+@font-face{
+  font-family: "iconfont";
+  src:url("../fonts/icons/iconfont.eot") format("embedded-opentype"),url("../fonts/icons/iconfont.woff") format("woff"),url("../fonts/icons/iconfont.ttf") format("truetype"),url("../fonts/icons/iconfont.svg") format("svg");
+}
 
 html, body {
     width: 100%;
@@ -134,11 +137,13 @@ html, body {
                 transform: scale(1);
 
                 &::after {
+                    font-family: "iconfont";
+
                     color: #fff;
-                    font-size: 80%;
+                    font-size: 120%;
                     line-height: 30px;
 
-                    content: "\e600";
+                    content: "\e6b4";
 
                     -webkit-font-smoothing: antialiased;
                     -moz-osx-font-smoothing: grayscale;

@@ -4,6 +4,7 @@ require('styles/App.scss');
 import React from 'react';
 import ReactDOM from 'react-dom'
 import ImgFigure from './ImgFigure';
+import ControllerUnit from './ControllerUnit';
 
 //获取图片相关数据
 let imageDatas = require('../data/imageDatas.json');
@@ -106,7 +107,7 @@ class AppComponent extends React.Component {
         isCenter:false
       };
     }
-    //
+
     if(imgsArrangeTopArr && imgsArrangeTopArr[0]){
       imgsArrangeArr.splice(topImgSpliceIndex , 0 , imgsArrangeTopArr[0]);
     }
@@ -197,6 +198,13 @@ class AppComponent extends React.Component {
           inverse={this.inverse(index)}
           center={this.center(index)}
         />);
+      controllerUnits.push(
+        <ControllerUnit
+          key={index}
+          arrange={this.state.imgsArrangeArr[index]}
+          inverse={this.inverse(index)}
+          center={this.center(index)}
+        />)
     }.bind(this))
     return (
       <section className="stage" ref="stage">
